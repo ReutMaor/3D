@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import modelPath from './charc/death_fire.glb';
-//import TextBubble from './TextBubble.js';
+import TextBubble from './TextBubble.js';
 
 function Character() {
     const { scene } = useGLTF(modelPath);
@@ -46,6 +46,7 @@ function Character() {
     return (
       <>
         <primitive ref={characterRef} object={scene} />
+        <TextBubble text="Chen Stop the bullshit" characterPosition={{ x: position[0], y: position[1]+6, z: position[2] }} />
       </>
     );
   }
