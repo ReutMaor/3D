@@ -5,6 +5,8 @@ import modelPath from './charc/death_fire.glb';
 import TextBubble from './TextBubble.js';
 import Polly from './aws_config.js';
 
+const SPEECH_TEXT = "Reut Stop the bullshit";  // Define the constant
+
 function Character() {
     const { scene } = useGLTF(modelPath);
     const characterRef = useRef();
@@ -26,6 +28,9 @@ function Character() {
             break;
           case 'ArrowRight':
             setPosition([x + 0.1, y, z]);
+            break;
+          case ' ':
+            speak(SPEECH_TEXT); // Trigger speech on spacebar press
             break;
           default:
             break;
@@ -64,22 +69,20 @@ function Character() {
       });
   };
 
-  useEffect(() => {
-      const text = "Chen Stop the bullshit";
-      speak(text);
-  }, []);
 
   useEffect(() => {
-      if (speechUrl) {
-          const audio = new Audio(speechUrl);
-          audio.play();
-      }
-  }, [speechUrl]);
+    if (speechUrl) {
+        const audio = new Audio(speechUrl);
+        audio.play().catch((error) => {
+            console.error("Audio playback failed:", error);
+        });
+    }
+}, [speechUrl]);
   
     return (
       <>
         <primitive ref={characterRef} object={scene} />
-        <TextBubble text="Chen Stop the bullshit" characterPosition={{ x: position[0], y: position[1]+6, z: position[2] }} />
+        <TextBubble text={SPEECH_TEXT} characterPosition={{ x: position[0], y: position[1]+6, z: position[2] }} />
       </>
     );
   }
