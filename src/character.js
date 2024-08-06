@@ -1,25 +1,25 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
-import modelPath from './charc/Cute Demon.glb';
+import { useGLTF, useAnimations } from '@react-three/drei';
+import modelPath from './charc/death_fire.glb';
 import TextBubble from './TextBubble.js';
 import Polly from './aws_config.js';
-//import { splitText } from './utils.js';  // Import the splitText function
+
 
 const SPEECH_TEXT = "Reut Stop the bullshit. This is a long text, divided by commas and periods.";  // Example text
-
 
 export function splitText(text) {
   return text.split(/[,\.]\s*/);  // Split by commas or periods followed by any whitespace
 }
 
 function Character() {
-    const { scene } = useGLTF(modelPath);
+    const { scene, animations } = useGLTF(modelPath);
+    const { actions } = useAnimations(animations, scene);
     const characterRef = useRef();
     const [position, setPosition] = useState([0, -3, 0]);
     const [speechUrls, setSpeechUrls] = useState([]);
     const [currentSegmentIndex, setCurrentSegmentIndex] = useState(0);
-    const [currentText, setCurrentText] = useState(""); // State for the current text segment
+    const [currentText, setCurrentText] = useState("");
 
     const speak = useCallback((text) => {
         const segments = splitText(text);
@@ -52,9 +52,10 @@ function Character() {
                 setSpeechUrls(results);
                 setCurrentSegmentIndex(0);
                 setCurrentText(results[0].text); // Set the initial text
+                if (actions.Talk) actions.Talk.play(); // Start talking animation
             })
             .catch(error => console.error("Error generating speech URLs:", error));
-    }, []);
+    }, [actions]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -101,8 +102,10 @@ function Character() {
                 .catch((error) => {
                     console.error("Audio playback failed:", error);
                 });
+        } else if (currentSegmentIndex >= speechUrls.length && actions.Talk) {
+            actions.Talk.stop(); // Stop talking animation when done
         }
-    }, [speechUrls, currentSegmentIndex]);
+    }, [speechUrls, currentSegmentIndex, actions]);
 
     useFrame(() => {
         if (characterRef.current) {
