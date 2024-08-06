@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
-import modelPath from './charc/death_fire.glb';
+import modelPath from './charc/Cute Demon.glb';
 import TextBubble from './TextBubble.js';
 import Polly from './aws_config.js';
 //import { splitText } from './utils.js';  // Import the splitText function
